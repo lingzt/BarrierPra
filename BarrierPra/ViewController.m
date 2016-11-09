@@ -20,6 +20,7 @@ NSString *_name;
 - (void)viewDidLoad {
     
     [super viewDidLoad];
+    //并行队列   set up on global queue
     _syncQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     for(int i=0; i<1000; i++){
         NSString *tempName = [NSString stringWithFormat:@"%d",i];
@@ -37,9 +38,9 @@ NSString *_name;
 }
 
 
-//并行队列
 
-//用同步
+
+//用同步  sync with global queue
 - (NSString *)name{
     __block NSString *localName;
     dispatch_sync(_syncQueue, ^{
@@ -49,7 +50,7 @@ NSString *_name;
     });
     return localName;
 }
-//利用异步栅栏块
+//利用异步栅栏块  async with global que, with barrier
 - (void)setName:(NSString *)name{
     dispatch_barrier_async(_syncQueue, ^{
         _name = name;
